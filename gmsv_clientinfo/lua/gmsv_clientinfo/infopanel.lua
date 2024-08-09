@@ -19,9 +19,12 @@ function PANEL:Init()
 	self:SetTickCounter(0)
 
 	self:ParentToHUD()
+	self:SetWide(285)
 
 	local InfoLabel = vgui.Create("DLabel", self)
 	InfoLabel:SetFont("BudgetLabel")
+	InfoLabel:SetTextColor(Color(255, 255, 255, 255))
+	InfoLabel:SetPos(2, 0)
 	self.m_InfoLabel = InfoLabel
 
 	-- They say you shouldn't do this, too bad!
@@ -37,11 +40,10 @@ function PANEL:SlowTick()
 	self.m_InfoLabel:SizeToContents()
 
 	-- Might stutter around a bit
-	local Width, Height = self.m_InfoLabel:GetSize()
-	With = math_min(Width, 300) -- Don't let it squish too much. Ideally the spacing would squish but that's a bit much work for this little panel :]
+	local _, Height = self.m_InfoLabel:GetSize()
 
-	self:SetSize(Width, Height)
-	self:SetPos(ScrW() - (Width + 12), ScrH() - Height)
+	self:SetTall(Height)
+	self:SetPos(ScrW() - self:GetWide(), ScrH() - Height)
 end
 
 function PANEL:Tick()
@@ -52,6 +54,15 @@ function PANEL:Tick()
 		self:SlowTick()
 		self:SetTickCounter(0)
 	end
+end
+
+function PANEL:Paint(Width, Height)
+	surface.SetDrawColor(0, 0, 0, 50)
+	surface.DrawRect(1, 1, Width, Height)
+
+	surface.SetDrawColor(0, 0, 0, 255)
+	surface.DrawLine(0, 0, Width, 0)
+	surface.DrawLine(0, 0, 0, Height)
 end
 
 function PANEL:OnRemove()
