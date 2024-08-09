@@ -1,12 +1,13 @@
+local engine_ServerFrameTime = engine.ServerFrameTime
 local Format = Format
 local GetHostName = GetHostName
-local RealFrameTime = RealFrameTime
-local engine_ServerFrameTime = engine.ServerFrameTime
 local math_Clamp = math.Clamp
 local math_floor = math.floor
 local math_min = math.min
-local ScrW = ScrW
+local os_date = os.date
+local RealFrameTime = RealFrameTime
 local ScrH = ScrH
+local ScrW = ScrW
 
 local PANEL = {}
 
@@ -32,7 +33,7 @@ function PANEL:SlowTick()
 	local EstimatedTickrate = math_Clamp(1 / engine_ServerFrameTime(), 0, MaxTickrate) -- Since it's an estimate it goes out of bounds a lot
 	local Framerate = math_floor(1 / RealFrameTime())
 
-	self.m_InfoLabel:SetText(Format("%s    TPS: %u / %u    FPS: %u", GetHostName(), EstimatedTickrate, MaxTickrate, Framerate))
+	self.m_InfoLabel:SetText(Format("%s    TPS: %u / %u    FPS: %u\n%s", GetHostName(), EstimatedTickrate, MaxTickrate, Framerate, os_date("%A, %B %d    %H:%M")))
 	self.m_InfoLabel:SizeToContents()
 
 	-- Might stutter around a bit
