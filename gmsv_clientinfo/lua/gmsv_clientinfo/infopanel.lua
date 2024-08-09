@@ -1,3 +1,4 @@
+local DisableClipping = DisableClipping
 local engine_ServerFrameTime = engine.ServerFrameTime
 local Format = Format
 local GetHostName = GetHostName
@@ -8,6 +9,9 @@ local os_date = os.date
 local RealFrameTime = RealFrameTime
 local ScrH = ScrH
 local ScrW = ScrW
+local surface_DrawLine = surface.DrawLine
+local surface_DrawRect = surface.DrawRect
+local surface_SetDrawColor = surface.SetDrawColor
 
 local PANEL = {}
 
@@ -19,7 +23,7 @@ function PANEL:Init()
 	self:SetTickCounter(0)
 
 	self:ParentToHUD()
-	self:SetWide(285)
+	self:SetSize(0, 0)
 
 	local InfoLabel = vgui.Create("DLabel", self)
 	InfoLabel:SetFont("BudgetLabel")
@@ -40,10 +44,11 @@ function PANEL:SlowTick()
 	self.m_InfoLabel:SizeToContents()
 
 	-- Might stutter around a bit
-	local _, Height = self.m_InfoLabel:GetSize()
+	local Width, Height = self.m_InfoLabel:GetSize()
+	With = math_min(Width, 285) -- Don't let it squish too much. Ideally the spacing would squish but that's a bit much work for this little panel :]
 
-	self:SetTall(Height)
-	self:SetPos(ScrW() - self:GetWide(), ScrH() - Height)
+	self:SetSize(Width, Height)
+	self:SetPos(ScrW() - Width, ScrH() - Height)
 end
 
 function PANEL:Tick()
@@ -56,13 +61,23 @@ function PANEL:Tick()
 	end
 end
 
-function PANEL:Paint(Width, Height)
-	surface.SetDrawColor(0, 0, 0, 50)
-	surface.DrawRect(1, 1, Width, Height)
+function PANEL:Paint()
+	local ScreenWidth = ScrW()
+	local ScreenHeight = ScrH()
 
-	surface.SetDrawColor(0, 0, 0, 255)
-	surface.DrawLine(0, 0, Width, 0)
-	surface.DrawLine(0, 0, 0, Height)
+	-- Adjust so it appears to fit even if it doesn't
+	local x, y = self:LocalToScreen(0, 0)
+	local DisplayWidth = ScreenWidth - x
+	local DisplayHeight = ScreenHeight - y
+
+	local ClippingEnabled = DisableClipping(true)
+		surface_SetDrawColor(0, 0, 0, 50)
+		surface_DrawRect(1, 1, DisplayWidth, DisplayHeight)
+
+		surface_SetDrawColor(0, 0, 0, 255)
+		surface_DrawLine(0, 0, ScreenWidth, 0)
+		surface_DrawLine(0, 0, 0, ScreenHeight)
+	DisableClipping(ClippingEnabled)
 end
 
 function PANEL:OnRemove()
