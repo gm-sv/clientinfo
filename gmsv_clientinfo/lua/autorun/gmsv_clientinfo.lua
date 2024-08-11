@@ -6,7 +6,7 @@ else
 	include("gmsv_clientinfo/infopanel.lua")
 end
 
-gmsv.StartModule("clientinfo")
+gmsv.StartModule("ClientInfo")
 do
 	if CLIENT then
 		local InfoPanel = nil
