@@ -19,7 +19,7 @@ AccessorFunc(PANEL, "m_iMaxTickrate", "MaxTickrate", FORCE_NUMBER)
 AccessorFunc(PANEL, "m_iTickCounter", "TickCounter", FORCE_NUMBER)
 
 function PANEL:Init()
-	self:SetMaxTickrate(math_floor(1 / engine.TickInterval()))
+	self:SetMaxTickrate(math.Round(1 / engine.TickInterval()))
 	self:SetTickCounter(0)
 
 	self:ParentToHUD()
